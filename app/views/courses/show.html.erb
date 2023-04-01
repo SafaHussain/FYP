@@ -1,0 +1,8 @@
+<%= render 'jumbotron' %>
+<%= render 'announcements' %>
+
+<% if current_user.user_type == "Student" %>
+  <%= render 'student_view' %>
+<% else %>
+  <%= render 'admin_view' %>
+<% end %>

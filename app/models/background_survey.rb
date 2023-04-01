@@ -1,0 +1,3 @@
+class BackgroundSurvey < Deliverable
+end
+

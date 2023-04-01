@@ -1,0 +1,3 @@
+class Quiz < Deliverable
+end
+

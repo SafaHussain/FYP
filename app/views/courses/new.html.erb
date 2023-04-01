@@ -1,0 +1,46 @@
+<h1>Create Course</h1>
+<%= form_with(model: @course) do |form| %>
+  <div class="form-group">
+    <%= form.label :course_name, "Course Name:" %>
+    <%= form.text_field :course_name, required: true, class: "form-control" %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :course_code, "Course Code:" %>
+    <%= form.text_field :course_code, required: true, class: "form-control" %>
+  </div>
+
+<div class="form-group">
+    <%= form.label :teacher_id, "Teacher:" %>
+  
+     <% @users = User.where(user_type: "teacher") %>
+    <%= form.select :teacher_id, options_for_select(@users.pluck(:first_name, :id) { |user|
+    [user.name.titleize,user.id] }, 1), {}%> 
+
+    </div>
+  <div class="form-group">
+    <%= form.label :department_id, "Department:" %>
+   <% @dept = Department.all%>
+    <%= form.select :department_id, options_for_select(@dept.pluck(:name, :id) { |d|
+    [d.name.titleize,d.id] }, 1), {}%> 
+ 
+    </div>
+
+<div class="form-group">
+    <%= form.label :semester_id, "Semester:" %>
+     <%= form.select :semester_id, options_for_select(Semester.all.pluck(:name, :id) { |s|
+    [s.name.titleize,s.id] }, 1), {}%> 
+ 
+   </div> 
+
+
+  <div class="form-group">
+    <%= form.label :capacity, "Capacity:" %>
+    <%= form.number_field :capacity, in: 1..5000, step: 1, required: true, class: "form-control" %>
+  </div>
+
+  <div class="actions">
+    <br><%= form.submit "Create Course", class: "btn btn-primary btn-lg btn-block" %>
+  </div>
+<% end %>
+
