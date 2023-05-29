@@ -1,6 +1,6 @@
 class PagesController < ApplicationController
   def home
-    if current_user.user_type == "admin"
+    if current_user.user_type =="Admin"
       @user_registrations = UserRegistration.where(status: "pending") 
       @course_registrations = CourseRegistration.includes(:user, :course).where(status: "pending")
       @chart_data = ChartDataGet.new(

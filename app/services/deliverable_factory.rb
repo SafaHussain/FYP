@@ -6,12 +6,30 @@ class DeliverableFactory < ActivityFactory
   def create_activity(type,deliverable_params, **kwargs)
     case type
     when "Quiz"
-      Quiz.find_or_create_by!(kwargs)
+      # Quiz.find_or_create_by!(kwargs)
+    
+      quiz=Quiz.new(title: kwargs[:title],instructions: kwargs[:instructions], course_id: kwargs[:course_id])
+     
+      uploaded_file= File.read(deliverable_params[:encrypted_file].tempfile)
+      file_contents=uploaded_file
+      key = OpenSSL::Cipher.new('AES-256-CBC').random_key
+      encrypted_data = AESCrypt.encrypt(file_contents,key)
+  
+      quiz.update_attribute(:encrypted_file, encrypted_data)
+      uploaded_file = quiz
+
+     if quiz.save
+      # document.key=Key.create(key: key)
+     else  
+      puts "Key not saved"
+     end
+    
+    
     when "Assignment"
       # Assignment.find_or_create_by!(kwargs)
 
       document=Assignment.new(title: kwargs[:title],instructions: kwargs[:instructions], course_id: kwargs[:course_id])
-     
+      
       uploaded_file= File.read(deliverable_params[:encrypted_file].tempfile)
       file_contents=uploaded_file
       key = OpenSSL::Cipher.new('AES-256-CBC').random_key
@@ -19,7 +37,9 @@ class DeliverableFactory < ActivityFactory
   
       document.update_attribute(:encrypted_file, encrypted_data)
       uploaded_file = document
+
      if document.save
+     
       # document.key=Key.create(key: key)
      else  
       puts "Key not saved"

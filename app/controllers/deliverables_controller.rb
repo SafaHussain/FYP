@@ -14,6 +14,7 @@ class DeliverablesController < ApplicationController
     if @deliverable.save
       flash[:notice] = "#{deliverable_params[:deliverable_type]} successfully created."
       redirect_to course_path(session[:course_id])
+     
     else
       flash[:error] = @deliverable.errors
       redirect_to course_path(session[:course_id])

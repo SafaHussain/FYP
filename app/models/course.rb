@@ -22,7 +22,6 @@ class Course < ApplicationRecord
   end
 
   def setup_announcement_manager
-    
      create_announcement_manager
     self.update(announcement_manager_id: AnnouncementManager.last.id)
   end

@@ -25,10 +25,10 @@ class CoursesController < ApplicationController
   end
 
   def show
-    if current_user.user_type == "student"
-      course_registration = CourseRegistration.find_by!(status: "approved", user: current_user, course: @course)
-      @grade = course_registration.grade
-    end
+    # if current_user.user_type == "student"
+    #   course_registration = CourseRegistration.find_by!(status: "approved", user: current_user, course: @course)
+    #   @grade = course_registration.grade
+    # end
   end
 
   def update_grade
@@ -40,8 +40,9 @@ class CoursesController < ApplicationController
   end
 
   def register
+    current_user= user=User.find(session[:user_id])
     create_course_registration
-   
+
   rescue
     flash[:error] = "Error creating course registration"
     redirect_to root_path
@@ -100,20 +101,8 @@ class CoursesController < ApplicationController
     params.require(:course).permit(:course_name, :course_code, :capacity, :teacher_id, :semester_id, :department_id, :announcement_content)
   end
 
-  def create_course_registration(current_user)
-    debugger
-    # u=current_user.user_registrations.find_by(user_id:current_user)
-    # s=Student.find(u.user_id)
-    # u=User.find(current_user.id)
-    user=User.find(session[:user_id])
+  def create_course_registration
     CourseRegistration.create!(status: "pending", user: current_user ,course: @course)
-  
-    # r=CourseRegistration.create!(status: "pending", course: @course)
-    # r.update(user: user)
-if r.save
-  puts "saved"
-else 
-  puts "not saved"
-end 
+    
   end
 end

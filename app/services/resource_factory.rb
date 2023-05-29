@@ -1,6 +1,7 @@
 class ResourceFactory < ActivityFactory
   require 'aescrypt'
   require 'stringio'
+  require 'digest'
   include ActiveModel::Model
 
   def initialize; end
@@ -11,44 +12,56 @@ class ResourceFactory < ActivityFactory
     
       url=Url.new(title: kwargs[:title],description: kwargs[:description],hyperlink: kwargs[:hyperlink], course_id: kwargs[:course_id])
       # document.update(encrypted_file: resource_params[:encrypted_file])
-      uploaded_file= File.read(resource_params[:encrypted_file].tempfile)
- 
-     file_contents=uploaded_file
-    #  file_contents = uploaded_file.read
-     key = OpenSSL::Cipher.new('AES-128-CBC').random_key
-    encrypted_data = AESCrypt.encrypt(file_contents,key)
+      file_contents= File.read(resource_params[:encrypted_file])
+      key = OpenSSL::Cipher.new('AES-128-CBC').random_key
+      encrypted_data = AESCrypt.encrypt(file_contents,key)
   
-    url.update_attribute(:encrypted_file, encrypted_data)
-    url.save
+    url.encrypted_file=encrypted_data
+    url.hashfile= Digest::SHA256.hexdigest(encrypted_data)
+   
+    if url.hashfile==Digest::SHA256.hexdigest(file_contents)
+      url.save
+      url.key= Key.create(key: key, resource_id: url.id)
+      return  url
+      else  
+       puts "Key not saved"
+      end
        
     when "Video"
       
       video=Video.new(title: kwargs[:title],description: kwargs[:description],hyperlink: kwargs[:hyperlink], course_id: kwargs[:course_id])
-      uploaded_file= File.read(resource_params[:encrypted_file].tempfile)
- 
-     file_contents=uploaded_file
-    #  file_contents = uploaded_file.read
-     key = OpenSSL::Cipher.new('AES-128-CBC').random_key
-    encrypted_data = AESCrypt.encrypt(file_contents,key)
+     
+      file_contents = File.read(resource_params[:encrypted_file])
+       #  file_contents = uploaded_file.read
+      key = OpenSSL::Cipher.new('AES-128-CBC').random_key
+      encrypted_data = AESCrypt.encrypt(file_contents,key)
   
-    video.update_attribute(:encrypted_file, encrypted_data)
-    video.save 
+      video.encrypted_file=encrypted_data
+      video.hashfile= Digest::SHA256.hexdigest(encrypted_data)
+     
+    if video.hashfile==Digest::SHA256.hexdigest(file_contents)
+      video.save
+      video.key= Key.create(key: key, resource_id: video.id)
+      return  video
+     else  
+      puts "Key not saved"
+     end
        
     when "Document"
       document=Document.new(title: kwargs[:title],description: kwargs[:description],hyperlink: kwargs[:hyperlink], course_id: kwargs[:course_id])
-     
-      uploaded_file= File.read(resource_params[:encrypted_file].tempfile)
-      file_contents=uploaded_file
+  
+      file_contents= File.read(resource_params[:encrypted_file])
       key = OpenSSL::Cipher.new('AES-256-CBC').random_key
       encrypted_data = AESCrypt.encrypt(file_contents,key)
-  
-      document.update_attribute(:encrypted_file, encrypted_data)
-      uploaded_file = document
-     if document.save
+
+      document.encrypted_file=encrypted_data.force_encoding('UTF-8')
+      document.hashfile= Digest::SHA256.hexdigest(encrypted_data)
      
-     document.key= Key.create(key: key, resource_id: document.id)
+      if document.hashfile==Digest::SHA256.hexdigest(encrypted_data)
+          document.save
+          document.key= Key.create(key: key, resource_id: document.id)
    
-      debugger
+     return  document
      else  
       puts "Key not saved"
      end
@@ -59,5 +72,5 @@ class ResourceFactory < ActivityFactory
 end
 private
 def document_params
-  params.require(:document).permit(:title,:description,:hyperlink,:course_id, :encrypted_file)
+  params.require(:document).permit(:title,:description,:hyperlink,:course_id, :encrypted_file,:hashfile)
 end

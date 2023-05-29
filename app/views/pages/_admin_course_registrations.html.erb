@@ -15,6 +15,12 @@
         </tr>
       </thead>
       <tbody>
+      <%
+=begin%>
+ <% @course_registrations = CourseRegistration.includes(:user, :course).where(status: "pending") %>
+<%
+=end%>
+   
         <% @course_registrations.each do |course_registration| %>
           <tr>
             <th scope="row"><%= course_registration.id %></th>
