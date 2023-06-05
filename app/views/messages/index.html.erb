@@ -1,0 +1,64 @@
+
+  
+  <div class="message-container">
+    <% @messages.each do |message| %>
+      <% if message.body %>
+        <% user = User.find(message.user_id) %>
+        <div class="message-item <%= 'sender' if message.user_id == current_user.id %>">
+          <div class="panel-heading">
+            <div class="header" >
+              <strong><%= user.first_name%></strong>
+			  <br>
+              <%= message.message_time %>
+            </div>
+            <div class="list">
+              <div class="item">
+                <i class="right triangle icon"></i>
+                <% if message.user_id == current_user.id %>
+				
+                  <% private_key_path = Rails.root.join('private_key', "#{@conversation.recipient_id}")
+                  private_key = File.read(private_key_path)
+                  private_key = Base64.decode64(private_key)
+                
+                  recipient = User.find_by(id: current_user.id)
+                  recipient_public_key = Base64.decode64(recipient.public_key)
+                
+                  secure_message = Themis::Smessage.new(private_key, recipient_public_key) %>
+                
+                 <%= decrypted_message = secure_message.unwrap(Base64.decode64(message.body)) %>
+              
+                <% else %>
+				<div class="recipient">
+                  <% private_key_path = Rails.root.join('private_key', "#{@conversation.recipient_id}")
+                  private_key = File.read(private_key_path)
+                  private_key = Base64.decode64(private_key)
+                
+                  sender = User.find_by(id: @conversation.sender_id)
+                  sender_public_key = Base64.decode64(sender.public_key)
+                
+                  secure_message = Themis::Smessage.new(private_key, sender_public_key) %>
+                
+                 <%= decrypted_message = secure_message.unwrap(Base64.decode64(message.body)) %>
+                </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+  
+</div>
+
+<div class="message-form" >
+  <%= form_for [@conversation, @message] do |f| %>
+    <div class="message-input ">
+      <%= f.text_area :body, class: "message-input" %>
+    </div>
+    <%= f.text_field :user_id, value: current_user.id, type: "hidden" %>
+    <div class="form-group">
+      <%= f.submit "Send Reply", class: "submit-button" %>
+    </div>
+  <% end %>
+</div>

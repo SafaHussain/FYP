@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_05_25_103620) do
+ActiveRecord::Schema.define(version: 2023_06_05_122352) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -46,7 +46,7 @@ ActiveRecord::Schema.define(version: 2023_05_25_103620) do
   create_table "announcement_managers", force: :cascade do |t|
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.integer "course_id"
+    t.bigint "course_id"
     t.index ["course_id"], name: "index_announcement_managers_on_course_id"
   end
 
@@ -55,13 +55,20 @@ ActiveRecord::Schema.define(version: 2023_05_25_103620) do
     t.boolean "pinned"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.integer "announcement_manager_id"
+    t.bigint "announcement_manager_id"
     t.index ["announcement_manager_id"], name: "index_announcements_on_announcement_manager_id"
+  end
+
+  create_table "conversations", force: :cascade do |t|
+    t.integer "sender_id"
+    t.integer "recipient_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "course_registrations", force: :cascade do |t|
     t.string "status"
-    t.integer "course_id", null: false
+    t.bigint "course_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "grade"
@@ -76,10 +83,10 @@ ActiveRecord::Schema.define(version: 2023_05_25_103620) do
     t.integer "capacity"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.integer "semester_id"
-    t.integer "teacher_id"
-    t.integer "department_id"
-    t.integer "announcement_manager_id"
+    t.bigint "semester_id"
+    t.bigint "teacher_id"
+    t.bigint "department_id"
+    t.bigint "announcement_manager_id"
     t.index ["announcement_manager_id"], name: "index_courses_on_announcement_manager_id"
     t.index ["department_id"], name: "index_courses_on_department_id"
     t.index ["semester_id"], name: "index_courses_on_semester_id"
@@ -90,7 +97,7 @@ ActiveRecord::Schema.define(version: 2023_05_25_103620) do
     t.integer "weight", default: 0
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.integer "course_id"
+    t.bigint "course_id"
     t.string "title"
     t.string "type"
     t.string "instructions"
@@ -123,12 +130,22 @@ ActiveRecord::Schema.define(version: 2023_05_25_103620) do
     t.index ["resource_id"], name: "index_keys_on_resource_id"
   end
 
+  create_table "messages", force: :cascade do |t|
+    t.text "body"
+    t.bigint "conversation_id"
+    t.bigint "user_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["conversation_id"], name: "index_messages_on_conversation_id"
+    t.index ["user_id"], name: "index_messages_on_user_id"
+  end
+
   create_table "notifications", force: :cascade do |t|
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "student_id"
     t.integer "course_id"
-    t.integer "user_id"
+    t.bigint "user_id"
     t.string "message"
     t.string "type"
     t.index ["user_id"], name: "index_notifications_on_user_id"
@@ -139,10 +156,11 @@ ActiveRecord::Schema.define(version: 2023_05_25_103620) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "hyperlink"
-    t.integer "course_id"
+    t.bigint "course_id"
     t.string "title"
     t.string "description"
     t.text "encrypted_file"
+    t.string "file"
     t.string "hashfile"
     t.index ["course_id"], name: "index_resources_on_course_id"
   end
@@ -154,14 +172,14 @@ ActiveRecord::Schema.define(version: 2023_05_25_103620) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "name"
-    t.integer "department_id", null: false
+    t.bigint "department_id", null: false
     t.index ["department_id"], name: "index_semesters_on_department_id"
     t.index ["name"], name: "index_semesters_on_name"
   end
 
   create_table "submissions", force: :cascade do |t|
-    t.integer "deliverable_id"
-    t.integer "user_id", null: false
+    t.bigint "deliverable_id"
+    t.bigint "user_id", null: false
     t.string "hyperlink"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -186,7 +204,7 @@ ActiveRecord::Schema.define(version: 2023_05_25_103620) do
   create_table "user_registrations", force: :cascade do |t|
     t.string "status"
     t.string "user_type"
-    t.integer "user_id", null: false
+    t.bigint "user_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["user_id"], name: "index_user_registrations_on_user_id"
@@ -203,6 +221,7 @@ ActiveRecord::Schema.define(version: 2023_05_25_103620) do
     t.string "user_type"
     t.string "gender"
     t.integer "age"
+    t.text "public_key"
   end
 
   create_table "web_notifications", force: :cascade do |t|

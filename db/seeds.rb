@@ -1,5 +1,23 @@
-@user=User.create(first_name: "Safa", last_name: "Hussain",username: "admin", email: "admin@gmail.com", password: "admin123",user_type: "Admin", gender: "female", age: "21");
+generator = Themis::SKeyPairGen.new
+    private_key, public_key = generator.rsa
+    
+    if public_key.present?
+     public_key=  public_key.force_encoding("BINARY")
+     public_key = Base64.strict_encode64(public_key)
+    else
+      flash[:notice]="Public Key in null."
+    end
+   
+  
+@user=User.create(first_name: "Safa", last_name: "Hussain",username: "admin", email: "admin@gmail.com", password: "admin123",user_type: "admin", gender: "female", age: "21", public_key: public_key);
+if @user
+private_key=  private_key.force_encoding("BINARY")
+private_key = Base64.strict_encode64(private_key)
 
+private_key_path = Rails.root.join('private_key', "#{@user.id}")
+File.write(private_key_path, private_key)
+
+end
 # require 'faker'
 
 # # helper integer function roman to help with roman numeral conversion

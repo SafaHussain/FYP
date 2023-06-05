@@ -7,7 +7,7 @@
 <% elsif current_user.user_type == "Admin" %>
   <%= render 'admin_user_registrations' %>
   <%= render 'admin_course_registrations' %>
-  <%= render 'admin_analytics' %>
+ 
 <% elsif current_user.user_type == "teacher" %>
   <%= render 'teacher_course_portal' %>
 <% elsif current_user.user_type == "Student" %>

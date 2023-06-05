@@ -1,6 +1,5 @@
 class UserRegistrationsController < ApplicationController
   skip_before_action :authorized
-
   def approve
     user_registration = UserRegistration.find(params[:id])
     user = user_registration.user

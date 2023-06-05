@@ -41,6 +41,8 @@ Rails.application.routes.draw do
   get 'logout', to: 'sessions#destroy'
 
   get 'pages/home'
-
+  resources :conversations do
+  	resources :messages
+  end
   root to: 'pages#home'
 end

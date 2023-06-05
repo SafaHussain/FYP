@@ -9,15 +9,15 @@
     <%= form.label :course_code, "Course Code:" %>
     <%= form.text_field :course_code, required: true, class: "form-control" %>
   </div>
-
+<%if current_user.user_type=="admin"%>
 <div class="form-group">
     <%= form.label :teacher_id, "Teacher:" %>
   
      <% @users = User.where(user_type: "teacher") %>
     <%= form.select :teacher_id, options_for_select(@users.pluck(:first_name, :id) { |user|
     [user.name.titleize,user.id] }, 1), {}%> 
-
     </div>
+    <% end %>
   <div class="form-group">
     <%= form.label :department_id, "Department:" %>
    <% @dept = Department.all%>
