@@ -44,8 +44,8 @@
                   <th scope="row"><%= resource.title %></th>
                   <td><%= resource.created_at.localtime.strftime '%Y-%m-%d %H:%M:%S' %></td>
                   <td><%= resource.type %></td>
-                  <td><%= button_to "View", resource_path(resource), :method => :get, class: 'btn btn-info', form: {style: 'display:inline-block;'} %> | <%= button_to "Edit", edit_resource_path(resource), :method => :get, class: 'btn btn-primary', form: {style: 'display:inline-block;'} %> |
-                   <td><%= button_to "Delete", {:controller => :resources, :action => 'destroy', :id => resource.id }, :method => :delete, class: 'btn btn-danger', form: {style: 'display:inline-block;'} %>
+                  <td><%= button_to "View", resource_path(resource), :method => :get, class: 'btn btn-info', form: {style: 'display:inline-block;'} %> <%= button_to "Edit", edit_resource_path(resource), :method => :get, class: 'btn btn-primary', form: {style: 'display:inline-block;'} %> 
+                   <%= button_to "Delete", {:controller => :resources, :action => 'destroy', :id => resource.id }, :method => :delete, class: 'btn btn-danger' %>
                         </td>
                     <%
 =begin%>
@@ -101,7 +101,7 @@
                   <th scope="row"><%= deliverable.title %></th>
                   <td><%= deliverable.created_at.localtime.strftime '%Y-%m-%d %H:%M:%S' %></td>
                   <td><%= deliverable.type %></td>
-                  <td> <%= button_to "View", deliverable_path(deliverable), :method => :get, class: 'btn btn-info', form: {style: 'display:inline-block;'} %> | <%= button_to "Edit", edit_deliverable_path(deliverable), :method => :get, class: 'btn btn-primary', form: {style: 'display:inline-block;'} %> |
+                  <td> <%= button_to "View", deliverable_path(deliverable), :method => :get, class: 'btn btn-info', form: {style: 'display:inline-block;'} %> <%= button_to "Edit", edit_deliverable_path(deliverable), :method => :get, class: 'btn btn-primary', form: {style: 'display:inline-block;'} %> 
 
                 <button data-toggle="modal" data-target=".delete-modal" class='btn btn-danger' ,style= "display:inline-block;">
                   <%= button_to "Delete", deliverable_path(deliverable), method: :delete, class: "btn btn-danger"%>

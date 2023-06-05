@@ -45,6 +45,7 @@ def show
 
 end
 
+
 def decrypt
     
   @resource = klass.find(params[:id])
@@ -52,7 +53,9 @@ def decrypt
   
   key=Key.find_by(resource_id: uploaded_file)
   decrypted_data = AESCrypt.decrypt(uploaded_file.encrypted_file,key.key)   
-  send_data decrypted_data, title:@resource.title
+  send_data decrypted_data,  filename: "#{@resource.title}", disposition: 'attachment'
+
+  return @resource
 end
 
   def update

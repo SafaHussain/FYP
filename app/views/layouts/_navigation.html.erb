@@ -11,13 +11,15 @@
       <ul class="nav navbar-nav ml-auto">
         <% if logged_in? %>
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <a class="nav-link" style="color: #007bff" href=<%= root_path %> id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <%= current_user.full_name %>
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdown">
               <a class="dropdown-item" href="<%= edit_user_path(current_user) %>">Edit Profile</a>
             </div>
           </li>
+         <li class='nav-item'><%= link_to 'Inbox', '/conversations', class: 'nav-link' %></li>
+     
           <li class='nav-item'><%= link_to 'Logout', '/logout', class: 'nav-link' %></li>
         <% else %>
           <li class='nav-item'><%= link_to 'Login', '/login', class: 'nav-link' %></li>

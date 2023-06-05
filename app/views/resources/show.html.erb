@@ -8,7 +8,7 @@
 <div class="card">
   <div class="card-body">
     <h5 class="card-title">Details</h5>
-   <p class="card-text"><b>File: </b><%= link_to 'Download', decrypt_resource_path(@resource) %>
+   <p class="card-text"><b>File: </b><%= link_to 'Download', remote: true %>
    <br><b>Created At: </b><%= @resource.created_at %><br><b>Description: </b><%= @resource.description %><br><b>Hyperlink: </b><%= @resource.hyperlink %><br></p> 
 
     <%
@@ -22,3 +22,12 @@
 
 <br>
 <%= link_to 'Back', course_path(@resource.course) %>
+
+<script>
+  $(document).ready(function() {
+    $('.card-text').on('ajax:success', function(event, data, status, xhr) {
+      window.location.href = '<%= decrypt_resource_path(@resource) %>';
+    });
+  });
+</script>
+
