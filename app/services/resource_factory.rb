@@ -19,7 +19,7 @@ class ResourceFactory < ActivityFactory
     url.encrypted_file=encrypted_data
     url.hashfile= Digest::SHA256.hexdigest(encrypted_data)
    
-    if url.hashfile==Digest::SHA256.hexdigest(file_contents)
+    if url.hashfile==Digest::SHA256.hexdigest(encrypted_data)
       url.save
       url.key= Key.create(key: key, resource_id: url.id)
       return  url
@@ -39,7 +39,7 @@ class ResourceFactory < ActivityFactory
       video.encrypted_file=encrypted_data
       video.hashfile= Digest::SHA256.hexdigest(encrypted_data)
      
-    if video.hashfile==Digest::SHA256.hexdigest(file_contents)
+    if video.hashfile==Digest::SHA256.hexdigest(encrypted_data)
       video.save
       video.key= Key.create(key: key, resource_id: video.id)
       return  video

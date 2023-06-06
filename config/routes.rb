@@ -2,7 +2,10 @@ Rails.application.routes.draw do
 
   resources :announcements, except: [:index, :show]
 
-  resources :deliverables, except: [:index]
+  resources :deliverables, except: [:index] do
+    get 'decrypt', on: :member 
+  end
+  
   resources :assignments, controller: 'deliverables', type: 'Assignment'
   resources :quizzes, controller: 'deliverables', type: 'Quiz'
   resources :tutorials, controller: 'deliverables', type: 'Tutorial'

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_06_05_122352) do
+ActiveRecord::Schema.define(version: 2023_06_06_152606) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -102,6 +102,7 @@ ActiveRecord::Schema.define(version: 2023_06_05_122352) do
     t.string "type"
     t.string "instructions"
     t.text "encrypted_file"
+    t.string "hashfile"
     t.index ["course_id"], name: "index_deliverables_on_course_id"
   end
 
@@ -124,9 +125,11 @@ ActiveRecord::Schema.define(version: 2023_06_05_122352) do
 
   create_table "keys", force: :cascade do |t|
     t.binary "key"
-    t.bigint "resource_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "deliverable_id"
+    t.bigint "resource_id"
+    t.index ["deliverable_id"], name: "index_keys_on_deliverable_id"
     t.index ["resource_id"], name: "index_keys_on_resource_id"
   end
 
@@ -233,6 +236,7 @@ ActiveRecord::Schema.define(version: 2023_06_05_122352) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "course_registrations", "courses"
   add_foreign_key "course_registrations", "users"
+  add_foreign_key "keys", "deliverables"
   add_foreign_key "keys", "resources"
   add_foreign_key "semesters", "departments"
   add_foreign_key "submissions", "deliverables"

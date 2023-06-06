@@ -2,7 +2,6 @@ class ResourcesController < ApplicationController
 
   require 'digest'
   before_action :set_resource, only: %i[ edit update destroy ]
-  # before_action :set_resource, only: %i[ show edit update destroy ]
   before_action :sanitize_params, only: %i[ edit update ]
   attr_accessor :encrypted_file
   

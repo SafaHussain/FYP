@@ -7,7 +7,7 @@ class CourseRegistrationsController < ApplicationController
     user = course_registration.user
     course = course_registration.course
 
-    raise "Invalid user_type" unless user.kind_of?(Student)
+    raise "Invalid user_type" unless user.user_type=="student"
 
     if Time.now > current_semester.registration_deadline
       flash[:error] = "Passed registration deadline"
@@ -28,8 +28,7 @@ class CourseRegistrationsController < ApplicationController
     user = course_registration.user
     course = course_registration.course
 
-    raise "Invalid user_type" unless user.kind_of?(Student)
-
+    raise "Invalid user_type" unless user.user_type=="student"
     ActiveRecord::Base.transaction do
       course_registration.update!(status: "denied")
       flash[:notice] = "Denied #{user.full_name}'s request to register in course #{course.course_name}"

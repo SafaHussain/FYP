@@ -10,17 +10,17 @@ class DeliverableFactory < ActivityFactory
     
       quiz=Quiz.new(title: kwargs[:title],instructions: kwargs[:instructions], course_id: kwargs[:course_id])
      
-      uploaded_file= File.read(deliverable_params[:encrypted_file].tempfile)
+      uploaded_file= File.read(deliverable_params[:encrypted_file])
       file_contents=uploaded_file
       key = OpenSSL::Cipher.new('AES-256-CBC').random_key
       encrypted_data = AESCrypt.encrypt(file_contents,key)
   
       quiz.update_attribute(:encrypted_file, encrypted_data)
-      uploaded_file = quiz
-
-     if quiz.save
-      # document.key=Key.create(key: key)
-     else  
+      if quiz.hashfile==Digest::SHA256.hexdigest(encrypted_data)
+        quiz.save
+        quiz.key= Key.create(key: key, deliverable_id: quiz.id)
+        return  quiz
+        else  
       puts "Key not saved"
      end
     
@@ -30,25 +30,45 @@ class DeliverableFactory < ActivityFactory
 
       document=Assignment.new(title: kwargs[:title],instructions: kwargs[:instructions], course_id: kwargs[:course_id])
       
-      uploaded_file= File.read(deliverable_params[:encrypted_file].tempfile)
+      uploaded_file= File.read(deliverable_params[:encrypted_file])
       file_contents=uploaded_file
       key = OpenSSL::Cipher.new('AES-256-CBC').random_key
       encrypted_data = AESCrypt.encrypt(file_contents,key)
   
       document.update_attribute(:encrypted_file, encrypted_data)
-      uploaded_file = document
-
-     if document.save
+      document.encrypted_file=encrypted_data
+      document.hashfile= Digest::SHA256.hexdigest(encrypted_data)
      
-      # document.key=Key.create(key: key)
-     else  
+      if document.hashfile==Digest::SHA256.hexdigest(encrypted_data)
+        document.save
+        document.key= Key.create(key: key, deliverable_id: document.id)
+        return  document
+        else  
       puts "Key not saved"
      end
 
 
 
     when "Tutorial"
-      Tutorial.find_or_create_by!(kwargs)
+
+      tutorial=Tutorial.new(title: kwargs[:title],instructions: kwargs[:instructions], course_id: kwargs[:course_id])
+      
+      uploaded_file= File.read(deliverable_params[:encrypted_file])
+      file_contents=uploaded_file
+      key = OpenSSL::Cipher.new('AES-256-CBC').random_key
+      encrypted_data = AESCrypt.encrypt(file_contents,key)
+  
+      tutorial.update_attribute(:encrypted_file, encrypted_data)
+      tutorial.encrypted_file=encrypted_data
+      tutorial.hashfile= Digest::SHA256.hexdigest(encrypted_data)
+     
+      if tutorial.hashfile==Digest::SHA256.hexdigest(encrypted_data)
+        tutorial.save
+        tutorial.key= Key.create(key: key, deliverable_id: tutorial.id)
+        return tutorial
+      else  
+        puts "Key not saved"
+      end
     else
       raise NotImplementedError
     end
