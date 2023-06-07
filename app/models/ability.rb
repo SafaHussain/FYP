@@ -9,7 +9,7 @@ class Ability
     if user.nil?
     can :create, User
     else
-    if user.user_type=="Admin"
+    if user.user_type=="admin"
         can [:manage], :all
 
       elsif user.user_type=="teacher"

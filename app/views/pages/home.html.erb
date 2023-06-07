@@ -4,13 +4,13 @@
 <% if @user_registration %>
 
   <%= render 'user_registrations' %>
-<% elsif current_user.user_type == "Admin" %>
+<% elsif current_user.user_type == "admin" %>
   <%= render 'admin_user_registrations' %>
   <%= render 'admin_course_registrations' %>
  
 <% elsif current_user.user_type == "teacher" %>
   <%= render 'teacher_course_portal' %>
-<% elsif current_user.user_type == "Student" %>
+<% elsif current_user.user_type == "student" %>
   <%= render 'student_course_portal', courses: current_user.courses.distinct %>
 <% end %>
 

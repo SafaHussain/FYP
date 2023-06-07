@@ -2,6 +2,9 @@ class UsersController < ApplicationController
   skip_before_action :authorized, only: [:new, :create]
   before_action :set_user, only: %i[ show edit update destroy ]
   before_action :sanitize_params, only: %i[ edit update ]
+ 
+  require 'rbthemis'
+  require "base64"
 
   def index
     @users = klass.all
@@ -14,7 +17,22 @@ class UsersController < ApplicationController
   def create
     @user = klass.new(user_params)
 
+    
     if @user.save
+      generator = Themis::SKeyPairGen.new
+      private_key, public_key = generator.rsa
+          
+      #  public_key=  public_key.force_encoding("BINARY")
+       public_key = Base64.encode64(public_key)
+      @user.update(public_key: public_key)
+      
+      # private_key=  private_key.force_encoding("BINARY")
+      private_key = Base64.encode64(private_key)
+  
+      private_key_path = Rails.root.join('private_key', "#{@user.id}")
+      File.write(private_key_path, private_key)
+      FileUtils.chmod(0600, private_key_path)
+      
       begin
         create_user_registration
       rescue

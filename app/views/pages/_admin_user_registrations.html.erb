@@ -13,11 +13,9 @@
         </tr>
       </thead>
       <tbody>
-      <%
-=begin%>
+    
  <%@user_registrations = UserRegistration.where(status: "pending") %> 
-<%
-=end%>
+
         <% @user_registrations.each do |user_registration| %>
           <tr>
             <th scope="row"><%= user_registration.id %></th>

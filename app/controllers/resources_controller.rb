@@ -27,31 +27,22 @@ end
 
 def show
   if @resource = klass.find(params[:id])  
-  
-  file_id = params[:id]
-  uploaded_file = Resource.find(file_id)
+ 
+   if @resource.hashfile==Digest::SHA256.hexdigest((@resource.encrypted_file))
 
-  if @resource.hashfile==Digest::SHA256.hexdigest((@resource.encrypted_file))
-
-  key=Key.find_by(resource_id: uploaded_file)
-  decrypted_data = AESCrypt.decrypt(uploaded_file.encrypted_file,key.key)
-#  redirect_to resource_path(@resource.id)
-  else 
-    flash[:notice]="The file has been manipulated. It is not the same as uploaded."   
-    redirect_to course_path(session[:course_id])
+     key=Key.find_by(resource_id: @resource.id)
+     decrypted_data = AESCrypt.decrypt(@resource.encrypted_file,key.key)
+   else 
+     flash[:notice]="The file has been manipulated. It is not the same as uploaded."   
+      redirect_to course_path(session[:course_id])
    end
  end 
-
 end
 
-
 def decrypt
-    
-  @resource = klass.find(params[:id])
-  uploaded_file = Resource.find(params[:id])
-  
-  key=Key.find_by(resource_id: uploaded_file)
-  decrypted_data = AESCrypt.decrypt(uploaded_file.encrypted_file,key.key)   
+  @resource = klass.find(params[:id])  
+  key=Key.find_by(resource_id: @resource.id)
+  decrypted_data = AESCrypt.decrypt(@resource.encrypted_file,key.key)   
   send_data decrypted_data,  filename: "#{@resource.title}", disposition: 'attachment'
 
   return @resource

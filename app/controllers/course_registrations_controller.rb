@@ -40,7 +40,7 @@ class CourseRegistrationsController < ApplicationController
   private
 
   def admin_authorization
-    unless current_user.user_type == "Admin"
+    unless current_user.user_type == "admin"
       flash[:error] = "Only admins are able to approve or deny course registration requests"
       redirect_to root_path
     end

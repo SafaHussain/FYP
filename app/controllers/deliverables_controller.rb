@@ -25,28 +25,22 @@ class DeliverablesController < ApplicationController
 
   def show
     if @deliverable = klass.find(params[:id])  
-    
-    file_id = params[:id]
-    uploaded_file = Deliverable.find(file_id)
+      if @deliverable.hashfile==Digest::SHA256.hexdigest((@deliverable.encrypted_file))
   
-    if @deliverable.hashfile==Digest::SHA256.hexdigest((@deliverable.encrypted_file))
-  
-    key=Key.find_by(deliverable_id: uploaded_file)
-    decrypted_data = AESCrypt.decrypt(uploaded_file.encrypted_file,key.key)
-  #  redirect_to resource_path(@resource.id)
-    else 
-      flash[:notice]="The file has been manipulated. It is not the same as uploaded."   
-      redirect_to course_path(session[:course_id])
-     end
-   end 
+        key=Key.find_by(deliverable_id: @deliverable.id)
+        decrypted_data = AESCrypt.decrypt(@deliverable.encrypted_file,key.key)
+      else 
+        flash[:notice]="The file has been manipulated. It is not the same as uploaded."   
+        redirect_to course_path(session[:course_id])
+      end
+    end 
   end
-   def decrypt
+  def decrypt
     
     @deliverable = klass.find(params[:id])
-    uploaded_file = Deliverable.find(params[:id])
-    
-    key=Key.find_by(deliverable_id: uploaded_file)
-    decrypted_data = AESCrypt.decrypt(uploaded_file.encrypted_file,key.key)   
+  
+    key=Key.find_by(deliverable_id: @deliverable)
+    decrypted_data = AESCrypt.decrypt(@deliverable.encrypted_file,key.key)   
     send_data decrypted_data,  filename: "#{@deliverable.title}", disposition: 'attachment'
   
     return @deliverable
@@ -72,6 +66,9 @@ class DeliverablesController < ApplicationController
     end
 
   def destroy
+    
+    key=Key.find_by(deliverarable_id: @deliverable.id)
+    key.destroy
     @deliverable.destroy
     flash[:notice] = "#{klass.name} was successfully destroyed."
     redirect_to course_path(session[:course_id])
